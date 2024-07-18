@@ -2,6 +2,7 @@
 General Purpose Computer made from scratch, all code is written in Hardware Description Language.
 
 If on MacOS Catalina or newer, use following command only once:
+
 echo "export PATH=$PATH:~/Desktop/GeneralComputer/tools" >> ~/.zshrc ; source ~/.zshrc
 
 
