@@ -6,8 +6,9 @@ echo "export PATH=$PATH:~/Desktop/GeneralComputer/tools" >> ~/.zshrc ; source ~/
 
 
 Then run any of these commands:
-HardwareSimulator.sh for Hardware Simulator
-CPUEmulator.sh for CPU Emulator
-Assembler.sh for Assembler
-VMEmulator.sh for VM Emulator
-JackCompiler.sh for Jack Compiler
+
+- HardwareSimulator.sh for Hardware Simulator
+- CPUEmulator.sh for CPU Emulator
+- Assembler.sh for Assembler
+- VMEmulator.sh for VM Emulator
+- JackCompiler.sh for Jack Compiler
