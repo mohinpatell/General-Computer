@@ -41,5 +41,38 @@ CHIP ALU {
         ng;      // if (out < 0)  equals 1, else 0
 
     PARTS:
-    //// Replace this comment with your code.
-}
+    // x input handling
+    Mux16(a=x, b=false, sel=zx, out=xOrZeroOut);     // zx flag
+    Not16(in=xOrZeroOut, out=notx);       // inverted x from last step
+    Mux16(a=xOrZeroOut, b=notx, sel=nx, out=xOrZeroOrNegatedOut);   // x or 0 or nx flag
+
+    // y input handling with diff flags
+    Mux16(a=y, b=false, sel=zy, out=yOrZeroOut);     // zy flag
+    Not16(in=yOrZeroOut, out=noty);       // inverted y from last step
+    Mux16(a=yOrZeroOut, b=noty, sel=ny, out=yOrZeroOrNegatedOut);   // y or 0 or ny flag
+
+    // xOrZeroOrNegatedOut and yOrZeroOrNegatedOut outputs are ready for f flag
+    Add16(a=xOrZeroOrNegatedOut, b=yOrZeroOrNegatedOut, out=xplusy);   // x + y
+    And16(a=xOrZeroOrNegatedOut, b=yOrZeroOrNegatedOut, out=xandy);    // x & y
+    Mux16(a=xandy, b=xplusy, sel=f, out=xOpy);    // f flag
+
+    // if no == 1, set out to not out
+    Not16(in=xOpy, out=notxOpy);    // not out
+    Mux16(a=xOpy, b=notxOpy, sel=no, out[0..7]=outLSB, out[8..14]=outMSB, out[15]=outMSBbit);
+
+    // out is split into 3 parts bc we need to see if its zero and negative
+    // final output
+    Mux16(a[0..7]=outLSB, a[8..14]=outMSB, a[15]=outMSBbit, b=true, sel=false, out=out);    // final output
+
+    // if out == 0, set zr to 1
+    // also if at least one of the output bits is 1 then output is 1, so negate it
+    Or8Way(in=outLSB, out=xOpyOr1);
+    Or8Way(in[0..6]=outMSB, in[7]=outMSBbit, out=xOpyOr2);
+    Or(a=xOpyOr1, b=xOpyOr2, out=xOpyOr);
+    Not(in=xOpyOr, out=zr);
+
+    // if out < 0, set ng to 1
+    // if the most significant bit is 1 then the number is negative
+    Or(a=outMSBbit, b=false, out=ng);
+
+}   
