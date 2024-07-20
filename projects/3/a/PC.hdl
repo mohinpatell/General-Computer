@@ -14,5 +14,19 @@ CHIP PC {
     OUT out[16];
     
     PARTS:
-    //// Replace this comment with your code.
+    // going to use inc16 to increment the value of the register
+    Inc16(in=regOutput, out=regOutputInc); 
+    Mux16(a=regOutput, b=regOutputInc, sel=inc, out=out1); // if inc is true, then out1 = regOutputInc, else out1 = regOutput
+    Mux16(a=out1, b=in, sel=load, out=out2); // if load is true, then out2 = in, else out2 = out1
+    Mux16(a=out2, b=false, sel=reset, out=regInput); // if reset is true, then regInput = false, else regInput = out2
+
+    // load == load or inc or reset
+    Or(a=load, b=inc, out=loadOrInc);
+    Or(a=loadOrInc, b=reset, out=loadOrIncOrReset);
+
+    // going to use a 16-bit register to store the value of the counter
+    Register(in=regInput, load=loadOrIncOrReset, out=regOutput);
+
+    // using or gate for output
+    Or16(a=false, b=regOutput, out=out);
 }

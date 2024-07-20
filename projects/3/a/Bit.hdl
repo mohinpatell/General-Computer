@@ -13,5 +13,8 @@ CHIP Bit {
     OUT out;
 
     PARTS:
-    //// Replace this comment with your code.
+    // going to use a mux to select between the input and the current value
+    Mux(a=dffOut, b=in, sel=load, out=muxOut); // if load is true, then muxOut = in, else muxOut = dffOut
+    DFF(in=muxOut, out=dffOut);
+    Or(a=false, b=dffOut, out=out); // if load is false, then out = dffOut, else out = true
 }
